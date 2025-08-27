@@ -329,7 +329,7 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
 
           {/* Advanced Options */}
           <div className="space-y-4">
-            <h3 className="text-sm font-medium text-foreground">Options</h3>
+            <h3 className="text-sm font-medium text-foreground">Basic Options</h3>
             
             <div className="flex items-center justify-between">
               <div>
@@ -369,6 +369,115 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
                 data-testid="alarm-form-snooze-toggle"
               />
             </div>
+
+            <h3 className="text-sm font-medium text-foreground mt-6">Smart Features</h3>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm text-foreground">Smart snooze</div>
+                <div className="text-xs text-muted-foreground">Increase snooze duration each time</div>
+              </div>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                {...form.register('smartSnooze')}
+                data-testid="alarm-form-smart-snooze-toggle"
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm text-foreground">Weather-based timing</div>
+                <div className="text-xs text-muted-foreground">Adjust wake time based on weather</div>
+              </div>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                {...form.register('weatherBased')}
+                data-testid="alarm-form-weather-toggle"
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm text-foreground">Location-based</div>
+                <div className="text-xs text-muted-foreground">Adapt to timezone changes</div>
+              </div>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                {...form.register('locationBased')}
+                data-testid="alarm-form-location-toggle"
+              />
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium text-foreground">Dismiss Method</Label>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                <Button
+                  type="button"
+                  variant={form.watch('dismissMethod') === 'tap' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => form.setValue('dismissMethod', 'tap')}
+                  data-testid="dismiss-method-tap"
+                >
+                  Tap
+                </Button>
+                <Button
+                  type="button"
+                  variant={form.watch('dismissMethod') === 'math' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => form.setValue('dismissMethod', 'math')}
+                  data-testid="dismiss-method-math"
+                >
+                  Math
+                </Button>
+                <Button
+                  type="button"
+                  variant={form.watch('dismissMethod') === 'shake' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => form.setValue('dismissMethod', 'shake')}
+                  data-testid="dismiss-method-shake"
+                >
+                  Shake
+                </Button>
+              </div>
+            </div>
+
+            {form.watch('dismissMethod') === 'math' && (
+              <div>
+                <Label className="text-sm font-medium text-foreground">Math Difficulty</Label>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  <Button
+                    type="button"
+                    variant={form.watch('mathDifficulty') === 'easy' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => form.setValue('mathDifficulty', 'easy')}
+                    data-testid="math-difficulty-easy"
+                  >
+                    Easy
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={form.watch('mathDifficulty') === 'medium' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => form.setValue('mathDifficulty', 'medium')}
+                    data-testid="math-difficulty-medium"
+                  >
+                    Medium
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={form.watch('mathDifficulty') === 'hard' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => form.setValue('mathDifficulty', 'hard')}
+                    data-testid="math-difficulty-hard"
+                  >
+                    Hard
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Action Buttons */}

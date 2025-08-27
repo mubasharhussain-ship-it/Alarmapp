@@ -7,6 +7,7 @@ import { AlarmRingingOverlay } from '@/components/AlarmRingingOverlay';
 import { useAlarms } from '@/hooks/use-alarms';
 import { useTheme } from '@/hooks/use-theme';
 import { Alarm, InsertAlarm } from '@shared/schema';
+import { Link } from 'wouter';
 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
@@ -120,6 +121,39 @@ export default function Home() {
             {formatCurrentDate()}
           </div>
         </Card>
+
+        {/* Quick Features */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mx-4 mt-4">
+          <Link href="/quick-alarms">
+            <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+              <div className="text-center">
+                <span className="material-icons text-3xl text-primary mb-2">timer</span>
+                <h3 className="font-medium text-foreground mb-1">Quick Alarms</h3>
+                <p className="text-sm text-muted-foreground">Set nap timers & presets</p>
+              </div>
+            </Card>
+          </Link>
+
+          <Link href="/sleep-cycle">
+            <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+              <div className="text-center">
+                <span className="material-icons text-3xl text-primary mb-2">bedtime</span>
+                <h3 className="font-medium text-foreground mb-1">Sleep Cycle</h3>
+                <p className="text-sm text-muted-foreground">Optimize your sleep timing</p>
+              </div>
+            </Card>
+          </Link>
+
+          <Link href="/statistics">
+            <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+              <div className="text-center">
+                <span className="material-icons text-3xl text-primary mb-2">analytics</span>
+                <h3 className="font-medium text-foreground mb-1">Statistics</h3>
+                <p className="text-sm text-muted-foreground">Track your sleep patterns</p>
+              </div>
+            </Card>
+          </Link>
+        </div>
 
         {/* Alarms List */}
         <div className="px-4 mt-6">

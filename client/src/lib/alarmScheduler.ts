@@ -1,5 +1,7 @@
 import { Alarm } from '@shared/schema';
 import { audioManager } from './audioManager';
+import { WeatherService } from './weatherService';
+import { LocationService } from './locationService';
 
 export interface AlarmEvent {
   alarm: Alarm;
@@ -16,12 +18,12 @@ export class AlarmScheduler {
     this.onAlarmRing = callback;
   }
 
-  scheduleAlarm(alarm: Alarm): void {
+  async scheduleAlarm(alarm: Alarm): Promise<void> {
     this.clearAlarm(alarm.id);
     
     if (!alarm.enabled) return;
 
-    const nextRingTime = this.calculateNextRingTime(alarm);
+    const nextRingTime = await this.calculateNextRingTime(alarm);
     if (!nextRingTime) return;
 
     const now = Date.now();
@@ -57,9 +59,31 @@ export class AlarmScheduler {
     this.activeTimeouts.clear();
   }
 
-  private calculateNextRingTime(alarm: Alarm): Date | null {
+  private async calculateNextRingTime(alarm: Alarm): Promise<Date | null> {
     const now = new Date();
-    const [hours, minutes] = alarm.time.split(':').map(Number);
+    let [hours, minutes] = alarm.time.split(':').map(Number);
+    let adjustedTime = alarm.time;
+
+    // Apply weather-based adjustments
+    if (alarm.weatherBased) {
+      const weather = await WeatherService.getCurrentWeather();
+      if (weather) {
+        adjustedTime = WeatherService.adjustAlarmTime(alarm.time, weather);
+        [hours, minutes] = adjustedTime.split(':').map(Number);
+      }
+    }
+
+    // Apply location-based adjustments
+    if (alarm.locationBased) {
+      const location = await LocationService.getCurrentLocation();
+      if (location) {
+        const currentTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (location.timezone !== currentTz) {
+          adjustedTime = LocationService.adjustAlarmForTimezone(adjustedTime, currentTz, location.timezone);
+          [hours, minutes] = adjustedTime.split(':').map(Number);
+        }
+      }
+    }
 
     if (alarm.repeatDays.length === 0) {
       // One-time alarm
@@ -177,8 +201,13 @@ export class AlarmScheduler {
     // Increment snooze count
     alarmEvent.snoozeCount++;
     
-    // Schedule snooze
-    const snoozeDelay = alarm.snoozeDuration * 60 * 1000; // Convert minutes to milliseconds
+    // Calculate smart snooze duration
+    let snoozeDelay = alarm.snoozeDuration * 60 * 1000; // Convert minutes to milliseconds
+    if (alarm.smartSnooze) {
+      // Increase snooze duration for each successive snooze
+      snoozeDelay += (alarmEvent.snoozeCount - 1) * 2 * 60 * 1000; // Add 2 minutes per snooze
+    }
+    
     const timeout = setTimeout(() => {
       this.triggerAlarm(alarm);
     }, snoozeDelay);

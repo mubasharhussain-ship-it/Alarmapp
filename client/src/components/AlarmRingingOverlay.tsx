@@ -1,6 +1,6 @@
 import React from 'react';
 import { AlarmEvent } from '@/lib/alarmScheduler';
-import { Button } from '@/components/ui/button';
+import { AlarmDismissalChallenge } from './AlarmDismissalChallenge';
 
 interface AlarmRingingOverlayProps {
   alarmEvent: AlarmEvent | null;
@@ -50,25 +50,12 @@ export function AlarmRingingOverlay({ alarmEvent, onSnooze, onDismiss }: AlarmRi
           </div>
         )}
         
-        <div className="flex flex-col gap-4 w-full max-w-xs">
-          <Button
-            className="w-full py-4 bg-destructive text-destructive-foreground rounded-xl text-lg font-medium"
-            onClick={() => onDismiss(alarm.id)}
-            data-testid="alarm-dismiss-button"
-          >
-            Dismiss
-          </Button>
-          
-          {canSnooze && (
-            <Button
-              variant="outline"
-              className="w-full py-4 border-2 border-primary text-primary rounded-xl text-lg font-medium"
-              onClick={() => onSnooze(alarm.id)}
-              data-testid="alarm-snooze-button"
-            >
-              Snooze ({alarm.snoozeDuration} min)
-            </Button>
-          )}
+        <div className="w-full max-w-xs">
+          <AlarmDismissalChallenge
+            alarm={alarm}
+            onDismiss={() => onDismiss(alarm.id)}
+            onSnooze={() => onSnooze(alarm.id)}
+          />
         </div>
       </div>
     </div>

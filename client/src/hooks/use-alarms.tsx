@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Alarm, InsertAlarm } from '@shared/schema';
-import { localStorage } from '@/lib/storage';
+import { alarmStorage } from '@/lib/storage';
 import { alarmScheduler, AlarmEvent } from '@/lib/alarmScheduler';
 
 export function useAlarms() {
@@ -10,7 +10,7 @@ export function useAlarms() {
 
   const loadAlarms = useCallback(() => {
     try {
-      const loadedAlarms = localStorage.getAllAlarms();
+      const loadedAlarms = alarmStorage.getAllAlarms();
       setAlarms(loadedAlarms);
       alarmScheduler.scheduleAlarms(loadedAlarms);
     } catch (error) {
@@ -47,7 +47,7 @@ export function useAlarms() {
 
   const createAlarm = useCallback((insertAlarm: InsertAlarm) => {
     try {
-      const newAlarm = localStorage.createAlarm(insertAlarm);
+      const newAlarm = alarmStorage.createAlarm(insertAlarm);
       setAlarms(prev => [...prev, newAlarm]);
       
       if (newAlarm.enabled) {
@@ -63,7 +63,7 @@ export function useAlarms() {
 
   const updateAlarm = useCallback((id: string, updates: Partial<Omit<Alarm, 'id' | 'createdAt'>>) => {
     try {
-      const updatedAlarm = localStorage.updateAlarm(id, updates);
+      const updatedAlarm = alarmStorage.updateAlarm(id, updates);
       if (!updatedAlarm) return null;
       
       setAlarms(prev => prev.map(alarm => 
@@ -85,7 +85,7 @@ export function useAlarms() {
 
   const deleteAlarm = useCallback((id: string) => {
     try {
-      const success = localStorage.deleteAlarm(id);
+      const success = alarmStorage.deleteAlarm(id);
       if (success) {
         setAlarms(prev => prev.filter(alarm => alarm.id !== id));
         alarmScheduler.clearAlarm(id);
