@@ -1,0 +1,25 @@
+{
+  "name": "AlarmClock - Reliable Local Alarms",
+  "short_name": "AlarmClock",
+  "description": "A reliable alarm clock app that works offline",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMiAyQzEzLjEgMiAxNCAyLjkgMTQgNFY2SDE2QzE3LjEgNiAxOCA2LjkgMTggOFYxOEMxOCAxOS4xIDE3LjEgMjAgMTYgMjBIOEM2LjkgMjAgNiAxOS4xIDYgMThWOEM2IDYuOSA2LjkgNiA4IDZIMTBWNEMxMCAyLjkgMTAuOSAyIDEyIDJaTTEyIDhDMTEuNCAxMSA4IDE0IDggMTZTMTAuNyAxOCAxMi44IDE4IDE2LjcgMTYgMTYuNyAxNFMxNS40IDExIDE0IDhIMTJaIiBmaWxsPSIjMjU2M2ViIi8+PC9zdmc+",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMiAyQzEzLjEgMiAxNCAyLjkgMTQgNFY2SDE2QzE3LjEgNiAxOCA2LjkgMTggOFYxOEMxOCAxOS4xIDE3LjEgMjAgMTYgMjBIOEM2LjkgMjAgNiAxOS4xIDYgMThWOEM2IDYuOSA2LjkgNiA4IDZIMTBWNEMxMCAyLjkgMTAuOSAyIDEyIDJaTTEyIDhDMTEuNCAxMSA4IDE0IDggMTZTMTAuNyAxOCAxMi44IDE4IDE2LjcgMTYgMTYuNyAxNFMxNS40IDExIDE0IDhIMTJaIiBmaWxsPSIjMjU2M2ViIi8+PC9zdmc+",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "prefer_related_applications": false
+}
