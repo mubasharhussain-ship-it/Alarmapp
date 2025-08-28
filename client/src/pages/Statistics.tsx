@@ -195,6 +195,13 @@ export default function Statistics() {
             
             <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
               <div className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                💡 Sleep Quality Tip
+              </div>
+              <div className="text-xs text-blue-700 dark:text-blue-300 mt-1">
+                Aim for 7-9 hours of sleep per night and try to maintain consistent sleep and wake times.
+              </div>
+            </div>d-lg">
+              <div className="text-sm font-medium text-blue-800 dark:text-blue-200">
                 💡 Did you know?
               </div>
               <div className="text-xs text-blue-700 dark:text-blue-300 mt-1">

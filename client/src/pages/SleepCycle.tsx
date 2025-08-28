@@ -109,14 +109,14 @@ export default function SleepCycle() {
             <Button onClick={calculateBedtimes} className="w-full" data-testid="calculate-bedtimes">
               Calculate Optimal Bedtimes
             </Button>
-            
+
             {optimalBedtimes.length > 0 && (
               <div className="mt-4">
                 <h3 className="font-medium text-foreground mb-3">Optimal Bedtimes:</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {optimalBedtimes.map((time, index) => (
-                    <Card 
-                      key={time} 
+                    <Card
+                      key={time}
                       className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary"
                       onClick={() => setAlarmForTime(time, `Bedtime Reminder`)}
                       data-testid={`bedtime-option-${index}`}
@@ -159,22 +159,22 @@ export default function SleepCycle() {
                 data-testid="bedtime-input"
               />
             </div>
-            <Button 
-              onClick={calculateWakeTimes} 
-              className="w-full" 
+            <Button
+              onClick={calculateWakeTimes}
+              className="w-full"
               disabled={!bedtime}
               data-testid="calculate-waketimes"
             >
               Calculate Optimal Wake Times
             </Button>
-            
+
             {optimalWakeTimes.length > 0 && (
               <div className="mt-4">
                 <h3 className="font-medium text-foreground mb-3">Optimal Wake Times:</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {optimalWakeTimes.map((time, index) => (
-                    <Card 
-                      key={time} 
+                    <Card
+                      key={time}
                       className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary"
                       onClick={() => setAlarmForTime(time, `Optimal Wake Up (${4 + index} cycles)`)}
                       data-testid={`waketime-option-${index}`}
@@ -206,15 +206,15 @@ export default function SleepCycle() {
             Analyze My Sleep
           </h2>
           <div className="space-y-4">
-            <Button 
-              onClick={analyzeSleep} 
-              className="w-full" 
+            <Button
+              onClick={analyzeSleep}
+              className="w-full"
               disabled={!bedtime || !wakeTime}
               data-testid="analyze-sleep"
             >
               Analyze Sleep Quality
             </Button>
-            
+
             {sleepQuality && (
               <div className="mt-4">
                 <Card className="p-4">
@@ -226,14 +226,14 @@ export default function SleepCycle() {
                       {sleepQuality.quality} Sleep Quality
                     </div>
                   </div>
-                  
+
                   <div className="w-full bg-muted rounded-full h-2 mb-4">
-                    <div 
+                    <div
                       className="bg-primary h-2 rounded-full transition-all duration-300"
                       style={{ width: `${sleepQuality.score}%` }}
                     ></div>
                   </div>
-                  
+
                   <div className="p-3 bg-muted rounded-lg">
                     <div className="text-sm font-medium text-foreground mb-1">Recommendation:</div>
                     <div className="text-sm text-muted-foreground" data-testid="sleep-recommendation">
@@ -256,24 +256,24 @@ export default function SleepCycle() {
             <div className="p-4 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
               <h3 className="font-medium text-blue-800 dark:text-blue-200 mb-2">💤 What are Sleep Cycles?</h3>
               <p className="text-sm text-blue-700 dark:text-blue-300">
-                A complete sleep cycle lasts about 90 minutes and includes light sleep, deep sleep, and REM sleep. 
+                A complete sleep cycle lasts about 90 minutes and includes light sleep, deep sleep, and REM sleep.
                 Waking up at the end of a cycle helps you feel more refreshed.
               </p>
             </div>
-            
+
             <div className="p-4 bg-green-100 dark:bg-green-900/20 rounded-lg">
               <h3 className="font-medium text-green-800 dark:text-green-200 mb-2">🎯 Optimal Sleep Duration</h3>
               <p className="text-sm text-green-700 dark:text-green-300">
-                Adults typically need 4-6 complete sleep cycles (6-9 hours) per night. 
+                Adults typically need 4-6 complete sleep cycles (6-9 hours) per night.
                 Quality matters more than quantity - better to wake after a complete cycle.
               </p>
             </div>
-            
+
             <div className="p-4 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
               <h3 className="font-medium text-purple-800 dark:text-purple-200 mb-2">⏰ Timing Matters</h3>
               <p className="text-sm text-purple-700 dark:text-purple-300">
-                It typically takes 15 minutes to fall asleep. Our calculator accounts for this 
-                when suggesting bedtimes, so you can plan accordingly.
+                Going to bed and waking up at consistent times helps regulate your body's internal clock.
+                Try to maintain the same schedule even on weekends.
               </p>
             </div>
           </div>
