@@ -90,3 +90,84 @@ export const backupSchema = z.object({
 });
 
 export type BackupData = z.infer<typeof backupSchema>;
+
+// Enhanced Alarm Schema with new features
+export const enhancedAlarmSchema = alarmSchema.extend({
+  biometricLock: z.boolean().default(false),
+  emergencyContact: z.string().optional(),
+  healthReminder: z.boolean().default(false),
+  aiOptimized: z.boolean().default(false),
+  socialShare: z.boolean().default(false),
+  challengeLevel: z.enum(['easy', 'medium', 'hard', 'extreme']).default('medium'),
+  productivityMode: z.boolean().default(false),
+  weatherSync: z.boolean().default(false)
+});
+
+export type EnhancedAlarm = z.infer<typeof enhancedAlarmSchema>;
+
+// AI Sleep Data Schema
+export const sleepDataSchema = z.object({
+  date: z.string(),
+  bedtime: z.string(),
+  wakeTime: z.string(),
+  sleepDuration: z.number(),
+  sleepQuality: z.number().min(1).max(10),
+  mood: z.number().min(1).max(10),
+  energy: z.number().min(1).max(10),
+  weather: z.string(),
+  caffeine: z.number(),
+  exercise: z.boolean(),
+  screenTime: z.number(),
+  stress: z.number().min(1).max(10)
+});
+
+export type SleepData = z.infer<typeof sleepDataSchema>;
+
+// Medical Reminder Schema
+export const medicalReminderSchema = z.object({
+  id: z.string(),
+  medication: z.string(),
+  dosage: z.string(),
+  times: z.array(z.string()),
+  frequency: z.enum(['daily', 'weekly', 'as_needed']),
+  important: z.boolean().default(false),
+  doctor: z.string(),
+  notes: z.string().optional()
+});
+
+export type MedicalReminder = z.infer<typeof medicalReminderSchema>;
+
+// Emergency Contact Schema
+export const emergencyContactSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  relationship: z.string(),
+  phone: z.string(),
+  priority: z.number()
+});
+
+export type EmergencyContact = z.infer<typeof emergencyContactSchema>;
+
+// Focus Session Schema
+export const focusSessionSchema = z.object({
+  id: z.string(),
+  type: z.enum(['pomodoro', 'deep_work', 'break', 'meditation']),
+  duration: z.number(),
+  startTime: z.date(),
+  endTime: z.date().optional(),
+  completed: z.boolean(),
+  productivity_score: z.number().optional()
+});
+
+export type FocusSession = z.infer<typeof focusSessionSchema>;
+
+// Family Member Schema
+export const familyMemberSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  avatar: z.string().optional(),
+  alarms: z.array(z.string()),
+  status: z.enum(['awake', 'sleeping', 'snoozing'])
+});
+
+export type FamilyMember = z.infer<typeof familyMemberSchema>;

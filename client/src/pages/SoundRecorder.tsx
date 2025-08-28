@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,7 +19,7 @@ export default function SoundRecorder() {
   const [recordingName, setRecordingName] = useState('');
   const [recordingTime, setRecordingTime] = useState(0);
   const [playingId, setPlayingId] = useState<string | null>(null);
-  
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -56,7 +55,7 @@ export default function SoundRecorder() {
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(blob);
-        
+
         if (recordingName.trim()) {
           const newRecording: Recording = {
             id: Math.random().toString(36).substr(2, 9),
@@ -65,23 +64,23 @@ export default function SoundRecorder() {
             url,
             duration: recordingTime
           };
-          
+
           setRecordings(prev => [...prev, newRecording]);
           saveRecordings([...recordings, newRecording]);
           setRecordingName('');
         }
-        
+
         stream.getTracks().forEach(track => track.stop());
       };
 
       mediaRecorder.start();
       setIsRecording(true);
       setRecordingTime(0);
-      
+
       timerRef.current = setInterval(() => {
         setRecordingTime(prev => prev + 1);
       }, 1000);
-      
+
     } catch (error) {
       console.error('Error starting recording:', error);
       alert('Unable to access microphone. Please check permissions.');
@@ -92,7 +91,7 @@ export default function SoundRecorder() {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-      
+
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
@@ -120,10 +119,10 @@ export default function SoundRecorder() {
       if (audioRef.current) {
         audioRef.current.pause();
       }
-      
+
       const audio = new Audio(recording.url);
       audioRef.current = audio;
-      
+
       audio.onended = () => setPlayingId(null);
       audio.play();
       setPlayingId(recording.id);
@@ -134,7 +133,7 @@ export default function SoundRecorder() {
     const updatedRecordings = recordings.filter(rec => rec.id !== id);
     setRecordings(updatedRecordings);
     saveRecordings(updatedRecordings);
-    
+
     if (playingId === id) {
       audioRef.current?.pause();
       setPlayingId(null);
@@ -176,7 +175,7 @@ export default function SoundRecorder() {
             <span className="material-icons text-primary">mic</span>
             Record New Alarm Sound
           </h2>
-          
+
           <div className="space-y-4">
             <div>
               <Label htmlFor="recording-name">Recording Name</Label>
@@ -188,7 +187,7 @@ export default function SoundRecorder() {
                 disabled={isRecording}
               />
             </div>
-            
+
             {isRecording && (
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-500 mb-2">
@@ -200,7 +199,7 @@ export default function SoundRecorder() {
                 </div>
               </div>
             )}
-            
+
             <div className="flex gap-4 justify-center">
               {!isRecording ? (
                 <Button
@@ -231,7 +230,7 @@ export default function SoundRecorder() {
             <span className="material-icons text-primary">library_music</span>
             Your Recordings
           </h2>
-          
+
           {recordings.length === 0 ? (
             <div className="text-center py-8">
               <span className="material-icons text-6xl text-muted-foreground mb-4">music_off</span>
@@ -265,7 +264,7 @@ export default function SoundRecorder() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <Button
                     variant="ghost"
                     size="sm"

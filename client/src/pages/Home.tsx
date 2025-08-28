@@ -183,6 +183,46 @@ export default function Home() {
               </div>
             </Card>
           </Link>
+
+          <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+            <div className="text-center">
+              <span className="material-icons text-3xl text-primary mb-2">psychology</span>
+              <h3 className="font-medium text-foreground mb-1">AI Sleep Coach</h3>
+              <p className="text-sm text-muted-foreground">Personalized sleep optimization</p>
+            </div>
+          </Card>
+
+          <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+            <div className="text-center">
+              <span className="material-icons text-3xl text-primary mb-2">fitness_center</span>
+              <h3 className="font-medium text-foreground mb-1">Focus & Productivity</h3>
+              <p className="text-sm text-muted-foreground">Pomodoro & deep work timers</p>
+            </div>
+          </Card>
+
+          <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+            <div className="text-center">
+              <span className="material-icons text-3xl text-primary mb-2">family_restroom</span>
+              <h3 className="font-medium text-foreground mb-1">Family Alarms</h3>
+              <p className="text-sm text-muted-foreground">Share & sync with family</p>
+            </div>
+          </Card>
+
+          <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+            <div className="text-center">
+              <span className="material-icons text-3xl text-primary mb-2">medical_services</span>
+              <h3 className="font-medium text-foreground mb-1">Health & Medical</h3>
+              <p className="text-sm text-muted-foreground">Medication & wellness reminders</p>
+            </div>
+          </Card>
+
+          <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+            <div className="text-center">
+              <span className="material-icons text-3xl text-primary mb-2">fingerprint</span>
+              <h3 className="font-medium text-foreground mb-1">Biometric Security</h3>
+              <p className="text-sm text-muted-foreground">Secure important alarms</p>
+            </div>
+          </Card>
         </div>
 
         {/* Alarms List */}

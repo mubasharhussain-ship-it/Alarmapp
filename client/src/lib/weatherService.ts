@@ -120,12 +120,23 @@ export class WeatherService {
     const [hours, minutes] = originalTime.split(':').map(Number);
     let adjustedMinutes = hours * 60 + minutes;
 
-    // Adjust by 15 minutes based on weather
-    if (weather.recommendation === 'earlier') {
-      adjustedMinutes -= 15;
-    } else if (weather.recommendation === 'later') {
-      adjustedMinutes += 15;
+    // Enhanced weather-based adjustments
+    let adjustment = 0;
+    
+    if (weather.condition === 'rainy' || weather.condition === 'stormy') {
+      adjustment = -20; // Wake up 20 minutes earlier for bad weather
+    } else if (weather.condition === 'snowy') {
+      adjustment = -30; // Wake up 30 minutes earlier for snow
+    } else if (weather.condition === 'sunny' && weather.temperature > 25) {
+      adjustment = 10; // Sleep in 10 minutes on nice days
     }
+
+    // Factor in humidity
+    if (weather.humidity > 80) {
+      adjustment -= 10; // High humidity affects sleep quality
+    }
+
+    adjustedMinutes += adjustment;
 
     // Handle day boundaries
     if (adjustedMinutes < 0) adjustedMinutes += 24 * 60;
@@ -135,5 +146,53 @@ export class WeatherService {
     const adjustedMins = adjustedMinutes % 60;
 
     return `${adjustedHours.toString().padStart(2, '0')}:${adjustedMins.toString().padStart(2, '0')}`;
+  }
+
+  static getWeatherAlarmTone(weather: WeatherData): string {
+    switch (weather.condition) {
+      case 'rainy':
+        return 'rain-sounds';
+      case 'sunny':
+        return 'birds-chirping';
+      case 'snowy':
+        return 'soft-bells';
+      case 'stormy':
+        return 'gentle-chimes';
+      default:
+        return 'classic-bell';
+    }
+  }
+
+  static getWeatherWakeUpMessage(weather: WeatherData): string {
+    const messages = {
+      sunny: [
+        "Good morning! It's a beautiful sunny day ahead ☀️",
+        "Rise and shine! The sun is calling you 🌞",
+        "Perfect weather for a great day! Time to get up! ☀️"
+      ],
+      rainy: [
+        "Good morning! Grab an umbrella - it's raining today 🌧️",
+        "Cozy rainy day ahead! Time to wake up ☔",
+        "Don't let the rain dampen your spirits! Good morning! 🌧️"
+      ],
+      cloudy: [
+        "Good morning! It's a cloudy but comfortable day ☁️",
+        "Gentle morning with overcast skies ⛅",
+        "Perfect weather for productivity! Time to get up! ☁️"
+      ],
+      snowy: [
+        "Good morning! Winter wonderland awaits you ❄️",
+        "Bundle up - it's snowing outside! ⛄",
+        "Magical snowy morning! Time to start your day! ❄️"
+      ],
+      stormy: [
+        "Good morning! Stay safe - stormy weather today ⛈️",
+        "Wild weather ahead! Time to wake up! 🌩️",
+        "Dramatic skies this morning! Rise and shine! ⛈️"
+      ]
+    };
+
+    const conditionMessages = messages[weather.condition] || messages.sunny;
+    return conditionMessages[Math.floor(Math.random() * conditionMessages.length)];
   }
 }
