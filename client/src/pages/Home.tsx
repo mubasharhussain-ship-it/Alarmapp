@@ -123,7 +123,7 @@ export default function Home() {
         </Card>
 
         {/* Quick Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mx-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mx-4 mt-4">
           <Link href="/quick-alarms">
             <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
               <div className="text-center">
@@ -150,6 +150,36 @@ export default function Home() {
                 <span className="material-icons text-3xl text-primary mb-2">analytics</span>
                 <h3 className="font-medium text-foreground mb-1">Statistics</h3>
                 <p className="text-sm text-muted-foreground">Track your sleep patterns</p>
+              </div>
+            </Card>
+          </Link>
+
+          <Link href="/world-clock">
+            <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+              <div className="text-center">
+                <span className="material-icons text-3xl text-primary mb-2">public</span>
+                <h3 className="font-medium text-foreground mb-1">World Clock</h3>
+                <p className="text-sm text-muted-foreground">Track time across timezones</p>
+              </div>
+            </Card>
+          </Link>
+
+          <Link href="/sound-recorder">
+            <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+              <div className="text-center">
+                <span className="material-icons text-3xl text-primary mb-2">mic</span>
+                <h3 className="font-medium text-foreground mb-1">Custom Sounds</h3>
+                <p className="text-sm text-muted-foreground">Record personal alarm tones</p>
+              </div>
+            </Card>
+          </Link>
+
+          <Link href="/stopwatch">
+            <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary">
+              <div className="text-center">
+                <span className="material-icons text-3xl text-primary mb-2">timer</span>
+                <h3 className="font-medium text-foreground mb-1">Stopwatch</h3>
+                <p className="text-sm text-muted-foreground">Time events & activities</p>
               </div>
             </Card>
           </Link>

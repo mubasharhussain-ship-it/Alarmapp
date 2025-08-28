@@ -30,20 +30,34 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
 
   const defaultTones = audioManager.getDefaultTones();
 
+  const getCustomRecordings = () => {
+    try {
+      const saved = localStorage.getItem('customRecordings');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  };
+
   const form = useForm<InsertAlarm>({
     resolver: zodResolver(insertAlarmSchema),
     defaultValues: {
-      time: '07:00',
-      label: '',
-      enabled: true,
-      repeatDays: [],
-      tone: 'classic-bell',
-      vibration: true,
-      gradualVolume: false,
-      snoozeEnabled: true,
-      snoozeDuration: 5,
-      maxSnoozes: 3,
-      dismissMethod: 'tap',
+      time: alarm?.time || '07:00',
+      label: alarm?.label || '',
+      enabled: alarm?.enabled ?? true,
+      repeatDays: alarm?.repeatDays || [],
+      tone: alarm?.tone || 'gentle-chimes',
+      vibration: alarm?.vibration ?? true,
+      gradualVolume: alarm?.gradualVolume ?? true,
+      snoozeEnabled: alarm?.snoozeEnabled ?? true,
+      snoozeDuration: alarm?.snoozeDuration || 5,
+      maxSnoozes: alarm?.maxSnoozes || 2,
+      dismissMethod: alarm?.dismissMethod || 'tap',
+      smartSnooze: alarm?.smartSnooze ?? true,
+      weatherBased: alarm?.weatherBased ?? false,
+      mathDifficulty: alarm?.mathDifficulty || 'easy',
+      locationBased: alarm?.locationBased ?? false,
+      isPreset: alarm?.isPreset ?? false,
     },
   });
 
@@ -52,13 +66,13 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
       const [alarmHour, alarmMinute] = alarm.time.split(':').map(Number);
       const alarmPeriod = alarmHour >= 12 ? 'PM' : 'AM';
       const displayHour = alarmHour === 0 ? 12 : alarmHour > 12 ? alarmHour - 12 : alarmHour;
-      
+
       setHour(displayHour);
       setMinute(alarmMinute);
       setPeriod(alarmPeriod);
       setSelectedDays(alarm.repeatDays);
       setSelectedTone(alarm.tone);
-      
+
       if (alarm.repeatDays.length === 0) setRepeatMode('never');
       else if (alarm.repeatDays.length === 7) setRepeatMode('daily');
       else if (alarm.repeatDays.every(d => [1,2,3,4,5].includes(d)) && alarm.repeatDays.length === 5) setRepeatMode('weekdays');
@@ -85,7 +99,7 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
     let hour24 = h;
     if (p === 'PM' && h !== 12) hour24 += 12;
     if (p === 'AM' && h === 12) hour24 = 0;
-    
+
     return `${hour24.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   };
 
@@ -93,11 +107,11 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
     const h = newHour ?? hour;
     const m = newMinute ?? minute;
     const p = newPeriod ?? period;
-    
+
     setHour(h);
     setMinute(m);
     setPeriod(p);
-    
+
     const timeString = formatTime(h, m, p);
     form.setValue('time', timeString);
   };
@@ -105,7 +119,7 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
   const handleRepeatModeChange = (mode: typeof repeatMode) => {
     setRepeatMode(mode);
     let days: number[] = [];
-    
+
     switch (mode) {
       case 'never':
         days = [];
@@ -123,7 +137,7 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
         days = selectedDays;
         break;
     }
-    
+
     setSelectedDays(days);
     form.setValue('repeatDays', days);
   };
@@ -132,7 +146,7 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
     const newDays = selectedDays.includes(day)
       ? selectedDays.filter(d => d !== day)
       : [...selectedDays, day].sort();
-    
+
     setSelectedDays(newDays);
     form.setValue('repeatDays', newDays);
     setRepeatMode('custom');
@@ -151,7 +165,7 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
         onClick={onCancel}
         data-testid="alarm-form-backdrop"
       />
-      
+
       <div className={`bottom-sheet fixed bottom-0 left-0 right-0 bg-card rounded-t-2xl z-40 max-h-[90vh] overflow-y-auto ${isOpen ? 'open' : ''}`}>
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between">
@@ -325,12 +339,47 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
                 </Button>
               ))}
             </div>
+            <div>
+              <Label htmlFor="alarm-form-tone">Alarm tone</Label>
+              <select
+                id="alarm-form-tone"
+                className="form-select"
+                {...form.register('tone')}
+                data-testid="alarm-form-tone-select"
+              >
+                <option value="gentle-chimes">Gentle Chimes</option>
+                <option value="classic-bell">Classic Bell</option>
+                <option value="digital-beep">Digital Beep</option>
+                <option value="nature-sounds">Nature Sounds</option>
+                <option value="piano-melody">Piano Melody</option>
+                <optgroup label="Custom Recordings">
+                  {getCustomRecordings().map(recording => (
+                    <option key={recording.id} value={`custom-${recording.id}`}>
+                      {recording.name}
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
+
+              <div className="mt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open('/sound-recorder', '_blank')}
+                  className="text-xs"
+                >
+                  <span className="material-icons mr-1 text-sm">mic</span>
+                  Record Custom Sound
+                </Button>
+              </div>
+            </div>
           </div>
 
           {/* Advanced Options */}
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-foreground">Basic Options</h3>
-            
+
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm text-foreground">Vibration</div>
@@ -371,7 +420,7 @@ export function AlarmForm({ alarm, onSave, onCancel, isOpen }: AlarmFormProps) {
             </div>
 
             <h3 className="text-sm font-medium text-foreground mt-6">Smart Features</h3>
-            
+
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm text-foreground">Smart snooze</div>
