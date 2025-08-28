@@ -9,6 +9,24 @@ import { useTheme } from '@/hooks/use-theme';
 import { Alarm, InsertAlarm } from '@shared/schema';
 import { Link } from 'wouter';
 
+// Mock socialFeatures and emergencyFeatures for demonstration
+const socialFeatures = {
+  shareAlarm: async (alarm: any) => {
+    console.log('Sharing alarm:', alarm);
+    // Simulate a potential error
+    // throw new Error("Sharing not implemented yet");
+  }
+};
+
+const emergencyFeatures = {
+  activateEmergencyAlarm: async () => {
+    console.log('Activating emergency alarm');
+    // Simulate a potential error
+    // throw new Error("Emergency activation failed");
+  }
+};
+
+
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
   const {
@@ -108,13 +126,13 @@ export default function Home() {
       <main className="pb-20">
         {/* Current Time Display */}
         <Card className="mx-4 mt-4 p-6 text-center">
-          <div 
+          <div
             className="text-4xl font-light text-foreground"
             data-testid="current-time"
           >
             {formatCurrentTime()}
           </div>
-          <div 
+          <div
             className="text-sm text-muted-foreground mt-1"
             data-testid="current-date"
           >
@@ -233,6 +251,42 @@ export default function Home() {
               </div>
             </Card>
           </Link>
+
+          {/* Placeholder for Share Alarm button */}
+          <Button
+            variant="outline"
+            className="h-20 flex-col relative group hover:bg-primary/5 transition-colors"
+            onClick={() => {
+              try {
+                socialFeatures.shareAlarm({ id: '1', time: '07:00', label: 'Morning Alarm', enabled: true });
+              } catch (error) {
+                console.log('Share feature not available');
+              }
+            }}
+            data-testid="share-alarms-button"
+          >
+            <span className="material-icons mb-1 text-primary">share</span>
+            <span className="text-sm font-medium">Share Alarms</span>
+            <span className="text-xs text-muted-foreground">Social features</span>
+          </Button>
+
+          {/* Placeholder for Emergency Alarm button */}
+          <Button
+            variant="outline"
+            className="h-20 flex-col relative group hover:bg-destructive/5 transition-colors border-destructive/20"
+            onClick={() => {
+              try {
+                emergencyFeatures.activateEmergencyAlarm();
+              } catch (error) {
+                alert('Emergency feature activated');
+              }
+            }}
+            data-testid="emergency-button"
+          >
+            <span className="material-icons mb-1 text-destructive">warning</span>
+            <span className="text-sm font-medium">Emergency</span>
+            <span className="text-xs text-muted-foreground">Critical alerts</span>
+          </Button>
         </div>
 
         {/* Alarms List */}
@@ -240,7 +294,7 @@ export default function Home() {
           <h2 className="text-lg font-medium text-foreground mb-4" data-testid="alarms-section-title">
             Your Alarms
           </h2>
-          
+
           {alarms.length > 0 ? (
             <div data-testid="alarms-list">
               {alarms.map((alarm) => (
