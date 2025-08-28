@@ -16,6 +16,9 @@ import FocusProductivity from "@/pages/FocusProductivity";
 import FamilyAlarms from "@/pages/FamilyAlarms";
 import HealthMedical from "@/pages/HealthMedical";
 import BiometricSecurity from "@/pages/BiometricSecurity";
+import SmartHome from "@/pages/SmartHome";
+import VoiceControl from "@/pages/VoiceControl";
+import LocationAlarms from "@/pages/LocationAlarms";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -33,6 +36,9 @@ function Router() {
       <Route path="/family-alarms" component={FamilyAlarms} />
       <Route path="/health-medical" component={HealthMedical} />
       <Route path="/biometric-security" component={BiometricSecurity} />
+      <Route path="/smart-home" component={SmartHome} />
+      <Route path="/voice-control" component={VoiceControl} />
+      <Route path="/location-alarms" component={LocationAlarms} />
       <Route component={NotFound} />
     </Switch>
   );

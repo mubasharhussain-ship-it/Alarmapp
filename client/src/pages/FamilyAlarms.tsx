@@ -1,31 +1,36 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+
+interface FamilyMember {
+  id: string;
+  name: string;
+  status: 'awake' | 'sleeping' | 'snoozing';
+  nextAlarm?: string;
+}
 
 export default function FamilyAlarms() {
-  const [familyMembers, setFamilyMembers] = useState([
-    { id: 1, name: 'Mom', avatar: '👩', alarms: 3, status: 'online' },
-    { id: 2, name: 'Dad', avatar: '👨', alarms: 2, status: 'online' },
-    { id: 3, name: 'Emma', avatar: '👧', alarms: 1, status: 'offline' }
+  const [members, setMembers] = useState<FamilyMember[]>([
+    { id: '1', name: 'John', status: 'sleeping', nextAlarm: '07:00' },
+    { id: '2', name: 'Sarah', status: 'awake', nextAlarm: '06:30' },
+    { id: '3', name: 'Emma', status: 'sleeping', nextAlarm: '07:30' },
   ]);
-  
-  const [shareCode, setShareCode] = useState('FAM-2024-XY7');
-  const [newMemberCode, setNewMemberCode] = useState('');
 
-  const addFamilyMember = () => {
-    if (newMemberCode.trim()) {
-      // Simulate adding a family member
-      const newMember = {
-        id: Date.now(),
-        name: 'New Member',
-        avatar: '👤',
-        alarms: 0,
-        status: 'offline'
-      };
-      setFamilyMembers([...familyMembers, newMember]);
-      setNewMemberCode('');
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'sleeping': return '😴';
+      case 'awake': return '😊';
+      case 'snoozing': return '😪';
+      default: return '❓';
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'sleeping': return 'text-blue-600';
+      case 'awake': return 'text-green-600';
+      case 'snoozing': return 'text-orange-600';
+      default: return 'text-gray-600';
     }
   };
 
@@ -46,104 +51,55 @@ export default function FamilyAlarms() {
       </header>
 
       <main className="p-4 space-y-6">
-        {/* Family Share Code */}
         <Card className="p-6">
-          <div className="text-center mb-4">
-            <span className="material-icons text-4xl text-primary mb-2">family_restroom</span>
-            <h2 className="text-xl font-semibold mb-2">Family Group</h2>
-            <p className="text-muted-foreground">Share alarms and schedules with your family</p>
-          </div>
-          
-          <div className="bg-muted rounded-lg p-4 text-center mb-4">
-            <p className="text-sm text-muted-foreground mb-2">Your Family Code</p>
-            <div className="text-2xl font-mono font-bold tracking-wider">{shareCode}</div>
-            <Button variant="ghost" size="sm" className="mt-2">
-              <span className="material-icons mr-2">content_copy</span>
-              Copy Code
-            </Button>
-          </div>
-
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter family code"
-              value={newMemberCode}
-              onChange={(e) => setNewMemberCode(e.target.value)}
-            />
-            <Button onClick={addFamilyMember}>
-              <span className="material-icons mr-2">person_add</span>
-              Join
-            </Button>
-          </div>
-        </Card>
-
-        {/* Family Members */}
-        <Card className="p-4">
-          <h3 className="font-semibold mb-4 flex items-center gap-2">
-            <span className="material-icons text-primary">people</span>
-            Family Members ({familyMembers.length})
-          </h3>
-          
-          <div className="space-y-3">
-            {familyMembers.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl">{member.avatar}</div>
-                  <div>
-                    <p className="font-medium">{member.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {member.alarms} active alarms
-                    </p>
+          <h2 className="text-lg font-medium mb-4">Family Status</h2>
+          <div className="grid gap-4">
+            {members.map((member) => (
+              <Card key={member.id} className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl">{getStatusIcon(member.status)}</div>
+                    <div>
+                      <h3 className="font-medium">{member.name}</h3>
+                      <p className={`text-sm capitalize ${getStatusColor(member.status)}`}>
+                        {member.status}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    {member.nextAlarm && (
+                      <p className="text-sm text-muted-foreground">
+                        Next: {member.nextAlarm}
+                      </p>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${
-                    member.status === 'online' ? 'bg-green-500' : 'bg-gray-400'
-                  }`} />
-                  <span className="text-xs text-muted-foreground capitalize">
-                    {member.status}
-                  </span>
-                </div>
-              </div>
+              </Card>
             ))}
           </div>
         </Card>
 
-        {/* Shared Alarms */}
-        <Card className="p-4">
-          <h3 className="font-semibold mb-4 flex items-center gap-2">
-            <span className="material-icons text-primary">share</span>
-            Shared Alarms
-          </h3>
-          
+        <Card className="p-6">
+          <h3 className="text-lg font-medium mb-4">Shared Alarms</h3>
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex items-center justify-between p-3 border rounded-lg">
               <div>
-                <p className="font-medium">Family Breakfast</p>
-                <p className="text-sm text-muted-foreground">08:00 • Daily • Shared by Mom</p>
+                <p className="font-medium">Family Wake Up</p>
+                <p className="text-sm text-muted-foreground">07:00 AM • Weekdays</p>
               </div>
-              <Button variant="ghost" size="sm">
-                <span className="material-icons">notifications</span>
-              </Button>
+              <Button variant="outline" size="sm">Edit</Button>
             </div>
-            
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex items-center justify-between p-3 border rounded-lg">
               <div>
-                <p className="font-medium">Movie Night</p>
-                <p className="text-sm text-muted-foreground">19:30 • Fridays • Shared by Dad</p>
+                <p className="font-medium">Weekend Sleep In</p>
+                <p className="text-sm text-muted-foreground">09:00 AM • Weekends</p>
               </div>
-              <Button variant="ghost" size="sm">
-                <span className="material-icons">notifications</span>
-              </Button>
+              <Button variant="outline" size="sm">Edit</Button>
             </div>
           </div>
-          
-          <Button className="w-full mt-4">
-            <span className="material-icons mr-2">add</span>
-            Create Shared Alarm
-          </Button>
+          <Button className="w-full mt-4">Create Shared Alarm</Button>
         </Card>
 
-        {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-4">
           <Button variant="outline" className="h-20 flex-col">
             <span className="material-icons mb-1">schedule</span>

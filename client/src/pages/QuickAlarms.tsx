@@ -1,90 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { alarmStorage } from '@/lib/storage';
-import { QuickPreset, InsertAlarm } from '@shared/schema';
+import { Card } from '@/components/ui/card';
 import { useAlarms } from '@/hooks/use-alarms';
+
+interface QuickAlarmPreset {
+  id: string;
+  name: string;
+  duration: number;
+  sound: string;
+  description: string;
+}
 
 export default function QuickAlarms() {
   const { createAlarm } = useAlarms();
-  const [presets, setPresets] = useState<QuickPreset[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [activeTimer, setActiveTimer] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadPresets();
-  }, []);
+  const presets: QuickAlarmPreset[] = [
+    { id: 'power-nap', name: 'Power Nap', duration: 20, sound: 'gentle', description: 'Quick refresh when you just need a moment to recharge' },
+    { id: 'coffee-break', name: 'Coffee Break', duration: 15, sound: 'bell', description: 'Perfect timing for a quick coffee or tea break' },
+    { id: 'meditation', name: 'Meditation', duration: 10, sound: 'chime', description: 'Short mindfulness session to center yourself' },
+    { id: 'pomodoro', name: 'Pomodoro', duration: 25, sound: 'notification', description: 'Focus session for productivity' },
+    { id: 'micro-break', name: 'Micro Break', duration: 5, sound: 'soft', description: 'Quick break from screen time' },
+    { id: 'lunch-break', name: 'Lunch Break', duration: 60, sound: 'bell', description: 'Extended break for meals' },
+  ];
 
-  const loadPresets = () => {
-    try {
-      const loadedPresets = alarmStorage.getPresets();
-      setPresets(loadedPresets);
-    } catch (error) {
-      console.error('Failed to load presets:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleQuickAlarm = (preset: QuickPreset) => {
+  const handleQuickAlarm = (preset: QuickAlarmPreset) => {
     const now = new Date();
-    const futureTime = new Date(now.getTime() + preset.duration * 60000);
-    
-    const timeString = `${futureTime.getHours().toString().padStart(2, '0')}:${futureTime.getMinutes().toString().padStart(2, '0')}`;
-    
-    const alarmData: InsertAlarm = {
-      time: timeString,
+    const alarmTime = new Date(now.getTime() + preset.duration * 60000);
+
+    createAlarm({
+      time: alarmTime.toTimeString().slice(0, 5),
       label: preset.name,
       enabled: true,
-      repeatDays: [],
-      tone: preset.tone,
-      vibration: preset.vibration,
-      gradualVolume: false,
+      sound: preset.sound,
+      volume: 70,
+      repeat: false,
       snoozeEnabled: true,
-      snoozeDuration: 5,
-      maxSnoozes: 3,
-      dismissMethod: 'tap',
-      smartSnooze: false,
-      weatherBased: false,
-      mathDifficulty: 'easy',
-      locationBased: false,
-      isPreset: true,
-      presetType: preset.id as any,
+      snoozeDuration: 5
+    });
+
+    setActiveTimer(preset.id);
+    setTimeout(() => setActiveTimer(null), 2000);
+  };
+
+  const getPresetIcon = (id: string) => {
+    const icons: Record<string, string> = {
+      'power-nap': '😴',
+      'coffee-break': '☕',
+      'meditation': '🧘',
+      'pomodoro': '🍅',
+      'micro-break': '⏱️',
+      'lunch-break': '🍽️'
     };
-
-    createAlarm(alarmData);
-    
-    // Show success feedback
-    alert(`${preset.name} set for ${futureTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
+    return icons[id] || '⏰';
   };
-
-  const getPresetIcon = (presetId: string) => {
-    switch (presetId) {
-      case 'nap-10':
-        return '😴';
-      case 'nap-20':
-        return '💤';
-      case 'power-nap':
-        return '⚡';
-      default:
-        return '⏰';
-    }
-  };
-
-  const getPresetDescription = (preset: QuickPreset) => {
-    const futureTime = new Date(Date.now() + preset.duration * 60000);
-    return `Will ring at ${futureTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center">
-          <span className="material-icons text-4xl text-muted-foreground animate-spin">refresh</span>
-          <p className="mt-2 text-muted-foreground">Loading quick alarms...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -115,7 +84,7 @@ export default function QuickAlarms() {
           <p className="text-sm text-muted-foreground mb-6">
             Perfect for naps, timers, and quick reminders. These alarms will go off once and then be removed.
           </p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {presets.map((preset) => (
               <Card 
@@ -131,114 +100,34 @@ export default function QuickAlarms() {
                     {preset.duration} minute{preset.duration !== 1 ? 's' : ''}
                   </p>
                   <p className="text-xs text-muted-foreground mb-4">
-                    {getPresetDescription(preset)}
+                    {preset.description}
                   </p>
-                  
-                  <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-3">
-                    <span className="material-icons text-sm">volume_up</span>
-                    <span>{preset.tone.replace('-', ' ')}</span>
-                    {preset.vibration && (
-                      <>
-                        <span className="material-icons text-sm">vibration</span>
-                        <span>Vibrate</span>
-                      </>
-                    )}
-                  </div>
-                  
-                  <Button 
-                    className="w-full"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleQuickAlarm(preset);
-                    }}
-                  >
-                    Set Alarm
-                  </Button>
+
+                  {activeTimer === preset.id && (
+                    <div className="text-green-600 text-sm font-medium">
+                      ✓ Alarm Set!
+                    </div>
+                  )}
                 </div>
               </Card>
             ))}
           </div>
         </Card>
 
-        {/* Custom Quick Alarm */}
+        {/* Custom Timer */}
         <Card className="p-6">
-          <h2 className="text-lg font-medium text-foreground mb-4 flex items-center gap-2">
-            <span className="material-icons text-primary">edit</span>
-            Custom Quick Alarm
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[5, 15, 30, 45, 60, 90, 120, 180].map((minutes) => (
-              <Button
-                key={minutes}
-                variant="outline"
-                className="p-3 h-auto"
-                onClick={() => {
-                  const now = new Date();
-                  const futureTime = new Date(now.getTime() + minutes * 60000);
-                  const timeString = `${futureTime.getHours().toString().padStart(2, '0')}:${futureTime.getMinutes().toString().padStart(2, '0')}`;
-                  
-                  const alarmData: InsertAlarm = {
-                    time: timeString,
-                    label: `${minutes} min timer`,
-                    enabled: true,
-                    repeatDays: [],
-                    tone: 'classic-bell',
-                    vibration: true,
-                    gradualVolume: false,
-                    snoozeEnabled: false,
-                    snoozeDuration: 5,
-                    maxSnoozes: 0,
-                    dismissMethod: 'tap',
-                    smartSnooze: false,
-                    weatherBased: false,
-                    mathDifficulty: 'easy',
-                    locationBased: false,
-                    isPreset: true,
-                    presetType: 'custom',
-                  };
-                  
-                  createAlarm(alarmData);
-                  alert(`${minutes} minute timer set!`);
-                }}
-                data-testid={`custom-alarm-${minutes}`}
-              >
-                <div className="text-center">
-                  <div className="font-medium">{minutes}</div>
-                  <div className="text-xs text-muted-foreground">min</div>
-                </div>
-              </Button>
-            ))}
-          </div>
-        </Card>
-
-        {/* Tips */}
-        <Card className="p-6">
-          <h2 className="text-lg font-medium text-foreground mb-4 flex items-center gap-2">
-            <span className="material-icons text-primary">lightbulb</span>
-            Quick Alarm Tips
-          </h2>
-          <div className="space-y-3">
-            <div className="flex items-start gap-3">
-              <span className="material-icons text-sm text-muted-foreground mt-0.5">schedule</span>
-              <div>
-                <div className="text-sm font-medium text-foreground">Power Nap (20 min)</div>
-                <div className="text-xs text-muted-foreground">Perfect for a quick energy boost without grogginess</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="material-icons text-sm text-muted-foreground mt-0.5">hotel</span>
-              <div>
-                <div className="text-sm font-medium text-foreground">Full Cycle (90 min)</div>
-                <div className="text-xs text-muted-foreground">Complete sleep cycle for deeper, more refreshing rest</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="material-icons text-sm text-muted-foreground mt-0.5">coffee</span>
-              <div>
-                <div className="text-sm font-medium text-foreground">Micro Nap (10 min)</div>
-                <div className="text-xs text-muted-foreground">Quick refresh when you just need a moment to recharge</div>
-              </div>
-            </div>
+          <h3 className="text-lg font-medium text-foreground mb-4">Custom Timer</h3>
+          <div className="flex items-center gap-4">
+            <input
+              type="number"
+              min="1"
+              max="480"
+              placeholder="Minutes"
+              className="flex-1 p-2 border border-border rounded-md bg-background text-foreground"
+            />
+            <Button onClick={() => {/* Handle custom timer */}}>
+              Set Timer
+            </Button>
           </div>
         </Card>
       </main>
