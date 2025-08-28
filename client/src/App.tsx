@@ -11,6 +11,11 @@ import Statistics from "@/pages/Statistics";
 import WorldClock from "@/pages/WorldClock";
 import SoundRecorder from "@/pages/SoundRecorder";
 import Stopwatch from "@/pages/Stopwatch";
+import AISleepCoach from "@/pages/AISleepCoach";
+import FocusProductivity from "@/pages/FocusProductivity";
+import FamilyAlarms from "@/pages/FamilyAlarms";
+import HealthMedical from "@/pages/HealthMedical";
+import BiometricSecurity from "@/pages/BiometricSecurity";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -23,6 +28,11 @@ function Router() {
       <Route path="/world-clock" component={WorldClock} />
       <Route path="/sound-recorder" component={SoundRecorder} />
       <Route path="/stopwatch" component={Stopwatch} />
+      <Route path="/ai-sleep-coach" component={AISleepCoach} />
+      <Route path="/focus-productivity" component={FocusProductivity} />
+      <Route path="/family-alarms" component={FamilyAlarms} />
+      <Route path="/health-medical" component={HealthMedical} />
+      <Route path="/biometric-security" component={BiometricSecurity} />
       <Route component={NotFound} />
     </Switch>
   );
