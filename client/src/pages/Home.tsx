@@ -252,7 +252,7 @@ export default function Home() {
             </Card>
           </Link>
 
-          {/* Placeholder for Share Alarm button */}
+          {/* Share Alarm */}
           <Button
             variant="outline"
             className="h-20 flex-col relative group hover:bg-primary/5 transition-colors"
@@ -270,7 +270,7 @@ export default function Home() {
             <span className="text-xs text-muted-foreground">Social features</span>
           </Button>
 
-          {/* Placeholder for Emergency Alarm button */}
+          {/* Emergency Alarm */}
           <Button
             variant="outline"
             className="h-20 flex-col relative group hover:bg-destructive/5 transition-colors border-destructive/20"
@@ -286,6 +286,181 @@ export default function Home() {
             <span className="material-icons mb-1 text-destructive">warning</span>
             <span className="text-sm font-medium">Emergency</span>
             <span className="text-xs text-muted-foreground">Critical alerts</span>
+          </Button>
+
+          {/* Backup & Restore */}
+          <Button
+            variant="outline"
+            className="h-20 flex-col relative group hover:bg-primary/5 transition-colors"
+            onClick={() => {
+              const confirmAction = confirm('Choose:\nOK = Backup Data\nCancel = Restore Data');
+
+              if (confirmAction) {
+                // Backup
+                const data = {
+                  alarms: JSON.parse(localStorage.getItem('alarms') || '[]'),
+                  settings: JSON.parse(localStorage.getItem('app-settings') || '{}'),
+                  timestamp: new Date().toISOString()
+                };
+
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `alarm-backup-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                alert('Backup downloaded successfully!');
+              } else {
+                // Restore
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                      try {
+                        const data = JSON.parse(e.target?.result as string);
+                        localStorage.setItem('alarms', JSON.stringify(data.alarms || []));
+                        localStorage.setItem('app-settings', JSON.stringify(data.settings || {}));
+                        alert('Data restored successfully! Please refresh the page.');
+                        window.location.reload();
+                      } catch (error) {
+                        alert('Invalid backup file!');
+                      }
+                    };
+                    reader.readAsText(file);
+                  }
+                };
+                input.click();
+              }
+            }}
+            data-testid="backup-restore-button"
+          >
+            <span className="material-icons mb-1 text-primary">backup</span>
+            <span className="text-sm font-medium">Backup & Restore</span>
+            <span className="text-xs text-muted-foreground">Save/load your data</span>
+          </Button>
+
+          {/* Dark Mode Toggle */}
+          <Button
+            variant="outline"
+            className="h-20 flex-col relative group hover:bg-primary/5 transition-colors"
+            onClick={() => {
+              const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+              const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+              document.documentElement.classList.remove('dark', 'light');
+              document.documentElement.classList.add(newTheme);
+
+              localStorage.setItem('theme', newTheme);
+
+              // Update the icon based on current theme
+              const icon = document.querySelector('[data-testid="dark-mode-toggle"] .material-icons');
+              if (icon) {
+                icon.textContent = newTheme === 'dark' ? 'light_mode' : 'dark_mode';
+              }
+
+              alert(`Switched to ${newTheme} mode!`);
+            }}
+            data-testid="dark-mode-toggle"
+          >
+            <span className="material-icons mb-1 text-primary">
+              {typeof window !== 'undefined' && document.documentElement.classList.contains('dark') ? 'light_mode' : 'dark_mode'}
+            </span>
+            <span className="text-sm font-medium">Dark Mode</span>
+            <span className="text-xs text-muted-foreground">Toggle theme</span>
+          </Button>
+
+          {/* System Info */}
+          <Button
+            variant="outline"
+            className="h-20 flex-col relative group hover:bg-primary/5 transition-colors"
+            onClick={() => {
+              const info = [
+                `🌐 Browser: ${navigator.userAgent.split(' ').pop()}`,
+                `💾 Storage Used: ${(JSON.stringify(localStorage).length / 1024).toFixed(1)} KB`,
+                `⏰ Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`,
+                `📱 Platform: ${navigator.platform}`,
+                `🔊 Audio: ${typeof Audio !== 'undefined' ? 'Supported' : 'Not Supported'}`,
+                `📍 Location: ${navigator.geolocation ? 'Available' : 'Not Available'}`,
+                `🔔 Notifications: ${Notification.permission || 'Not Supported'}`,
+                `🎯 Online: ${navigator.onLine ? 'Yes' : 'No'}`,
+                `⚡ Service Worker: ${navigator.serviceWorker ? 'Supported' : 'Not Supported'}`
+              ].join('\n');
+
+              alert(`System Information:\n\n${info}`);
+            }}
+            data-testid="system-info-button"
+          >
+            <span className="material-icons mb-1 text-primary">info</span>
+            <span className="text-sm font-medium">System Info</span>
+            <span className="text-xs text-muted-foreground">Device details</span>
+          </Button>
+
+          {/* Test Alarm */}
+          <Button
+            variant="outline"
+            className="h-20 flex-col relative group hover:bg-primary/5 transition-colors"
+            onClick={() => {
+              // Create audio context and generate a beep sound
+              const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+              const playBeep = (frequency: number, duration: number, delay: number = 0) => {
+                setTimeout(() => {
+                  const oscillator = audioContext.createOscillator();
+                  const gainNode = audioContext.createGain();
+
+                  oscillator.connect(gainNode);
+                  gainNode.connect(audioContext.destination);
+
+                  oscillator.frequency.value = frequency;
+                  oscillator.type = 'sine';
+
+                  gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+
+                  oscillator.start(audioContext.currentTime);
+                  oscillator.stop(audioContext.currentTime + duration);
+                }, delay);
+              };
+
+              // Play a test alarm sequence
+              alert('Playing test alarm sound...');
+              playBeep(800, 0.2, 0);
+              playBeep(600, 0.2, 300);
+              playBeep(800, 0.2, 600);
+              playBeep(600, 0.2, 900);
+              playBeep(800, 0.5, 1200);
+
+              // Show notification if permission is granted
+              if (Notification.permission === 'granted') {
+                setTimeout(() => {
+                  new Notification('Test Alarm', {
+                    body: 'This is how your alarm notifications will appear',
+                    icon: '/manifest.json'
+                  });
+                }, 1000);
+              } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                  if (permission === 'granted') {
+                    setTimeout(() => {
+                      new Notification('Test Alarm', {
+                        body: 'This is how your alarm notifications will appear',
+                        icon: '/manifest.json'
+                      });
+                    }, 1000);
+                  }
+                });
+              }
+            }}
+            data-testid="test-alarm-button"
+          >
+            <span className="material-icons mb-1 text-primary">play_arrow</span>
+            <span className="text-sm font-medium">Test Alarm</span>
+            <span className="text-xs text-muted-foreground">Preview sounds</span>
           </Button>
         </div>
 
